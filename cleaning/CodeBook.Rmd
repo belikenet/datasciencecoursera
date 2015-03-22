@@ -1,0 +1,214 @@
+---
+title: "project"
+output: 
+    md_document :
+        toc: true
+        variant: markdown_github
+---
+
+# Getting and Cleaning Data Course Project 
+
+## tidify(pathToUciHarDataset)
+
+## dependencies
+```{r}
+source("str_activity.R")
+source("str_feature.R")
+```
+
+The variable ```pathToUciHarDataset``` contains the path to UCI HAR datasets
+```{r}
+pathToUciHarDataset = "UCI HAR Dataset"
+```
+
+## 1. Merges the training and the test sets to create one data set.
+
+Load test data in ```test``` data frame
+```{r, cache=TRUE}
+test <- read.table(paste(pathToUciHarDataset,"/test/X_test.txt", sep=""))
+```
+
+Load train data in ```train```
+```{r, cache=TRUE}
+train <- read.table(paste(pathToUciHarDataset,"/train/X_train.txt", sep=""))
+```
+
+Merges all data in a single dataset named ```all_ds```. Check dimensions of the resulting dataset
+```{r}
+all_ds <- rbind(test, train)
+dim(test)
+dim(train)
+dim(all_ds)
+stopifnot (dim(all_ds)[1] == dim(test)[1] + dim(train)[1], dim(all_ds)[2] == dim(test)[2])
+```
+
+Remove non needed dataframes
+```{r}
+rm(train)
+rm(test)
+```
+
+## 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+
+Load all features (measurements) in ```features``` dataframe. I used the csv variant, using as separtor white space, as all columns are separated evenly by white spaces
+```{r}
+features <- read.csv(paste(pathToUciHarDataset,"/features.txt", sep=""), sep=" ", header=F)
+```
+
+Check dimensions. ```features``` dataframe contains a row for each column in ```all_ds```
+```{r}
+dim(all_ds)
+dim(features)
+stopifnot(dim(all_ds)[2] == dim(features)[1])
+```
+
+Second column of ```features``` dataframe contains feature (column) name. We will follow approach such as any column containing -std() or -mean() is feature's standard deviation or mean, so this will become a selected (valid) feature for our work. The dataframe ```selected_features``` stores only selected features
+```{r}
+selected_features <- features[grepl("-mean()|-std()", features[,2]),]
+```
+
+Check ```selected_features```, so there are 79 features names which commits to the selection criteria
+```{r}
+dim(selected_features)
+```
+
+Extract only measurements from ```selected_features``` in ```selected_ds``` dataframe. Check resulting data frame dimensions
+```{r}
+selected_ds <- all_ds[,selected_features[,1]]
+dim(selected_ds)
+#stopifnot(dim(selected_ds)[1] == dim(all_ds)[1], dim(all_ds)[2] == dim(selected_features)[1])
+```
+
+Remove ```all_ds``` from workspace
+```{r}
+rm(all_ds)
+```
+
+## 3. Uses descriptive activity names to name the activities in the data set.
+
+Load activity labels in ```activity_labels``` datframe.
+```{r}
+activity_labels <- read.csv(paste(pathToUciHarDataset,"/activity_labels.txt", sep=""), sep=" ", header=F)
+```
+
+Load test and training activities. I used the fwf variant, using width = 1 (only one digit).
+Merge all activities together and check dimensions of resulting ```activities``` dataset. Remove non needed activities dataframes
+```{r}
+test_activities <- read.fwf(paste(pathToUciHarDataset,"/test/y_test.txt", sep=""), header=F,widths=1)
+train_activities <- read.fwf(paste(pathToUciHarDataset,"/train/y_train.txt",sep=""), header=F,widths=1)
+activities <- rbind(test_activities, train_activities)
+dim(activities)
+stopifnot(dim(activities)[1] == dim(selected_ds)[1])
+rm(test_activities)
+rm(train_activities)
+```
+
+Check dimensions of ```activities``` and validate min/max (10299 observations, min=1, max=6) aligned with activity labels first column
+```{r}
+dim(activities)
+table(activities)
+print (activity_labels)
+```
+
+Apply ```str_activity``` to activity labels and store result in new column. This step is not really needed, but I just wanted to check new factors were correct
+```{r}
+activity_labels$Activity = factor(activity_labels[,1], labels=str_activity(activity_labels[,2]))
+str(activity_labels)
+print(activity_labels)
+```
+
+Add new ```Activity``` column translating activity integer to its factor in the ```activities``` dataframe. Check translation against original form
+```{r}
+activities$Activity <- factor(activities[,1], labels = str_activity(activity_labels[,2]))
+table(activities[,1])
+table(activities$Activity)
+```
+
+Bind activity column with selected features. Check new dimensions (10299x80, same rows but plus one more column, which is the new activity label)
+```{r}
+selected_ds$Activity <- activities$Activity
+dim(selected_ds)
+stopifnot(dim(selected_ds)[2] == 80)
+```
+
+
+## 4. Appropriately labels the data set with descriptive variable names.
+
+Check column names before translation. So we've got almost all column names following pattern V1:V552, except last column which is named Activity
+```{r}
+names(selected_ds)
+```
+
+Label columns with descriptive names, using function ```str_feature```. We used a little trick, the selected_features dataset populated before, adding the new column Activity we added in previously. Check columns
+```{r}
+names(selected_ds) <- c(str_feature(selected_features[,2]), "Activity")
+names(selected_ds)
+stopifnot(dim(selected_ds)[2] == dim(selected_features)[1] + 1)
+str(selected_ds)
+```
+
+## 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+Load test and training subjects. Merge all subjects into ```subjects``` variable and check their dimensions. Remove non needed subject dataframes
+```{r}
+test_subjects <- read.fwf(paste(pathToUciHarDataset,"/test/subject_test.txt",sep=""), widths=2, header=F)
+train_subjects <- read.fwf(paste(pathToUciHarDataset,"/train/subject_train.txt",sep=""), widths=2, header=F)
+subjects <- rbind(test_subjects, train_subjects)
+str(subjects)
+stopifnot(dim(subjects)[1] == dim(selected_ds)[1])
+rm(test_subjects)
+rm(train_subjects)
+```
+
+Add column ```Subject``` to ```selected_ds``` dataframe. Check dimensions (same number of rows, but plus one more column = 81)
+```{r}
+selected_ds$Subject <- subjects[,1]
+dim(selected_ds)
+stopifnot(dim(selected_ds)[2] == 81)
+```
+
+
+Finally, we get the tidy dataset grouping by subject and activity name, and summarising the mean of the groups. We clean the resulting columns, removing last columns (original Activity and Subject columns)
+```{r, echo=FALSE}
+tidy_ds <- aggregate(selected_ds, by=list(Subject = selected_ds$Subject, Activity = selected_ds$Activity), mean)[,1:81]
+```
+```{r, results='asis'}
+knitr::kable(tidy_ds)
+```
+
+## str_activity(x)
+The variable ```x``` is the input data
+
+Custom funciton which cleans up activity labels:
+
+* to lower
+* replaces "_" by white space
+
+```{r}
+str_activity <- function(x){ 
+     gsub("_"," ",tolower(x))
+}
+```
+
+## str_feature(x)
+The variable ```x``` is the input data
+
+Custom function which cleans up the feature names:
+
+* remove "()"
+* replace dimension name by "Dim{dimesion}""
+* replace "-mean" by "Mean"
+* replace "-std" by "Std"
+
+This will help in case we need to manipulate columns in the feature using their names
+
+```{r}
+str_feature <- function(x){ 
+    x <- gsub("[\\(\\)]", "", x)
+    x <- gsub("-X$", "DimX", x)
+    x <- gsub("-Y$", "DimY", x)
+    x <- gsub("-Z$", "DimZ", x)
+    x <- gsub("-mean", "Mean", x)
+    gsub("-std", "Std", x)
+}
+```
