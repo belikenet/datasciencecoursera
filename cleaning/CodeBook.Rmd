@@ -8,7 +8,7 @@ output:
 
 # Getting and Cleaning Data Course Project 
 
-## tidify(pathToUciHarDataset)
+## run_analysis(pathToUciHarDataset)
 
 ## dependencies
 ```{r}
@@ -39,7 +39,7 @@ all_ds <- rbind(test, train)
 dim(test)
 dim(train)
 dim(all_ds)
-stopifnot (dim(all_ds)[1] == dim(test)[1] + dim(train)[1], dim(all_ds)[2] == dim(test)[2])
+stopifnot (nrow(all_ds) == nrow(test) + nrow(train), ncol(all_ds) == ncol(test))
 ```
 
 Remove non needed dataframes
@@ -76,7 +76,7 @@ Extract only measurements from ```selected_features``` in ```selected_ds``` data
 ```{r}
 selected_ds <- all_ds[,selected_features[,1]]
 dim(selected_ds)
-#stopifnot(dim(selected_ds)[1] == dim(all_ds)[1], dim(all_ds)[2] == dim(selected_features)[1])
+stopifnot(nrow(selected_ds) == nrow(all_ds), ncol(selected_ds) == nrow(selected_features))
 ```
 
 Remove ```all_ds``` from workspace
@@ -98,7 +98,7 @@ test_activities <- read.fwf(paste(pathToUciHarDataset,"/test/y_test.txt", sep=""
 train_activities <- read.fwf(paste(pathToUciHarDataset,"/train/y_train.txt",sep=""), header=F,widths=1)
 activities <- rbind(test_activities, train_activities)
 dim(activities)
-stopifnot(dim(activities)[1] == dim(selected_ds)[1])
+stopifnot(nrow(activities) == nrow(selected_ds))
 rm(test_activities)
 rm(train_activities)
 ```
@@ -128,7 +128,7 @@ Bind activity column with selected features. Check new dimensions (10299x80, sam
 ```{r}
 selected_ds$Activity <- activities$Activity
 dim(selected_ds)
-stopifnot(dim(selected_ds)[2] == 80)
+stopifnot(ncol(selected_ds) == 80)
 ```
 
 
@@ -143,7 +143,7 @@ Label columns with descriptive names, using function ```str_feature```. We used 
 ```{r}
 names(selected_ds) <- c(str_feature(selected_features[,2]), "Activity")
 names(selected_ds)
-stopifnot(dim(selected_ds)[2] == dim(selected_features)[1] + 1)
+stopifnot(ncol(selected_ds) == nrow(selected_features) + 1)
 str(selected_ds)
 ```
 
@@ -155,7 +155,7 @@ test_subjects <- read.fwf(paste(pathToUciHarDataset,"/test/subject_test.txt",sep
 train_subjects <- read.fwf(paste(pathToUciHarDataset,"/train/subject_train.txt",sep=""), widths=2, header=F)
 subjects <- rbind(test_subjects, train_subjects)
 str(subjects)
-stopifnot(dim(subjects)[1] == dim(selected_ds)[1])
+stopifnot(nrow(subjects) == nrow(selected_ds))
 rm(test_subjects)
 rm(train_subjects)
 ```
@@ -164,12 +164,12 @@ Add column ```Subject``` to ```selected_ds``` dataframe. Check dimensions (same 
 ```{r}
 selected_ds$Subject <- subjects[,1]
 dim(selected_ds)
-stopifnot(dim(selected_ds)[2] == 81)
+stopifnot(ncol(selected_ds) == 81)
 ```
 
 
-Finally, we get the tidy dataset grouping by subject and activity name, and summarising the mean of the groups. We clean the resulting columns, removing last columns (original Activity and Subject columns)
-```{r, echo=FALSE}
+Finally, we get the tidy dataset grouping by subject and activity name, and summarising the mean of the groups. Resulting dataset is clean up, removing last columns (original Activity and Subject columns)
+```{r, warning=FALSE}
 tidy_ds <- aggregate(selected_ds, by=list(Subject = selected_ds$Subject, Activity = selected_ds$Activity), mean)[,1:81]
 ```
 ```{r, results='asis'}

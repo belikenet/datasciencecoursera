@@ -1,5 +1,5 @@
 -   Getting and Cleaning Data Course Project
-    -   tidify(pathToUciHarDataset)
+    -   run\_analysis(pathToUciHarDataset)
     -   dependencies
     -   1. Merges the training and the test sets to create one data set.
     -   2. Extracts only the measurements on the mean and standard deviation for each measurement.
@@ -12,8 +12,8 @@
 Getting and Cleaning Data Course Project
 ========================================
 
-tidify(pathToUciHarDataset)
----------------------------
+run\_analysis(pathToUciHarDataset)
+----------------------------------
 
 dependencies
 ------------
@@ -66,7 +66,7 @@ dim(all_ds)
     ## [1] 10299   561
 
 ``` r
-stopifnot (dim(all_ds)[1] == dim(test)[1] + dim(train)[1], dim(all_ds)[2] == dim(test)[2])
+stopifnot (nrow(all_ds) == nrow(test) + nrow(train), ncol(all_ds) == ncol(test))
 ```
 
 Remove non needed dataframes
@@ -127,7 +127,7 @@ dim(selected_ds)
     ## [1] 10299    79
 
 ``` r
-#stopifnot(dim(selected_ds)[1] == dim(all_ds)[1], dim(all_ds)[2] == dim(selected_features)[1])
+stopifnot(nrow(selected_ds) == nrow(all_ds), ncol(selected_ds) == nrow(selected_features))
 ```
 
 Remove `all_ds` from workspace
@@ -157,7 +157,7 @@ dim(activities)
     ## [1] 10299     1
 
 ``` r
-stopifnot(dim(activities)[1] == dim(selected_ds)[1])
+stopifnot(nrow(activities) == nrow(selected_ds))
 rm(test_activities)
 rm(train_activities)
 ```
@@ -245,7 +245,7 @@ dim(selected_ds)
     ## [1] 10299    80
 
 ``` r
-stopifnot(dim(selected_ds)[2] == 80)
+stopifnot(ncol(selected_ds) == 80)
 ```
 
 4. Appropriately labels the data set with descriptive variable names.
@@ -321,7 +321,7 @@ names(selected_ds)
     ## [79] "fBodyBodyGyroJerkMagMeanFreq" "Activity"
 
 ``` r
-stopifnot(dim(selected_ds)[2] == dim(selected_features)[1] + 1)
+stopifnot(ncol(selected_ds) == nrow(selected_features) + 1)
 str(selected_ds)
 ```
 
@@ -423,7 +423,7 @@ str(subjects)
     ##  $ V1: int  2 2 2 2 2 2 2 2 2 2 ...
 
 ``` r
-stopifnot(dim(subjects)[1] == dim(selected_ds)[1])
+stopifnot(nrow(subjects) == nrow(selected_ds))
 rm(test_subjects)
 rm(train_subjects)
 ```
@@ -438,550 +438,14 @@ dim(selected_ds)
     ## [1] 10299    81
 
 ``` r
-stopifnot(dim(selected_ds)[2] == 81)
+stopifnot(ncol(selected_ds) == 81)
 ```
 
-Finally, we get the tidy dataset grouping by subject and activity name, and summarising the mean of the groups. We clean the resulting columns, removing last columns (original Activity and Subject columns)
-
-    ## Warning in mean.default(X[[1L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[2L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[3L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[4L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[5L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[6L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[7L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[8L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[9L]], ...): argument is not numeric or logical:
-    ## returning NA
-
-    ## Warning in mean.default(X[[10L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[11L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[12L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[13L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[14L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[15L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[16L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[17L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[18L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[19L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[20L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[21L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[22L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[23L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[24L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[25L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[26L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[27L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[28L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[29L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[30L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[31L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[32L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[33L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[34L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[35L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[36L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[37L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[38L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[39L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[40L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[41L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[42L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[43L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[44L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[45L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[46L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[47L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[48L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[49L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[50L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[51L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[52L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[53L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[54L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[55L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[56L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[57L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[58L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[59L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[60L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[61L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[62L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[63L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[64L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[65L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[66L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[67L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[68L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[69L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[70L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[71L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[72L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[73L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[74L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[75L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[76L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[77L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[78L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[79L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[80L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[81L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[82L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[83L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[84L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[85L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[86L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[87L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[88L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[89L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[90L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[91L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[92L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[93L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[94L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[95L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[96L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[97L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[98L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[99L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[100L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[101L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[102L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[103L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[104L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[105L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[106L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[107L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[108L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[109L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[110L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[111L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[112L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[113L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[114L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[115L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[116L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[117L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[118L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[119L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[120L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[121L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[122L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[123L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[124L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[125L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[126L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[127L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[128L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[129L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[130L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[131L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[132L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[133L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[134L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[135L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[136L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[137L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[138L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[139L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[140L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[141L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[142L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[143L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[144L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[145L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[146L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[147L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[148L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[149L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[150L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[151L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[152L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[153L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[154L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[155L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[156L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[157L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[158L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[159L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[160L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[161L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[162L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[163L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[164L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[165L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[166L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[167L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[168L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[169L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[170L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[171L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[172L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[173L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[174L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[175L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[176L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[177L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[178L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[179L]], ...): argument is not numeric or
-    ## logical: returning NA
-
-    ## Warning in mean.default(X[[180L]], ...): argument is not numeric or
-    ## logical: returning NA
+Finally, we get the tidy dataset grouping by subject and activity name, and summarising the mean of the groups. Resulting dataset is clean up, removing last columns (original Activity and Subject columns)
+
+``` r
+tidy_ds <- aggregate(selected_ds, by=list(Subject = selected_ds$Subject, Activity = selected_ds$Activity), mean)[,1:81]
+```
 
 ``` r
 knitr::kable(tidy_ds)
