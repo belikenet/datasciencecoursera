@@ -1,4 +1,4 @@
-tidify <- function (pathToUciHarDataset){
+run_analysis <- function (pathToUciHarDataset){
     
     # 1. Merges the training and the test sets to create one data set.
     test <- read.table(paste(pathToUciHarDataset,"/test/X_test.txt", sep=""))
@@ -27,6 +27,7 @@ tidify <- function (pathToUciHarDataset){
     activities$Activity <- factor(activities[,1], labels = str_activity(activity_labels[,2]))
     
     selected_ds$Activity <- activities$Activity
+    
     
     # 4. Appropriately labels the data set with descriptive variable names.
     names(selected_ds) <- c(str_feature(selected_features[,2]), "Activity")
